@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arman's Physics Care - SSC Motion Exam</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background:  #001F1F;
+      padding: 20px;
+      color: #fff;
+      overflow-y: scroll;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #000000;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: white;
+    }
+    h1 span {
+      color:#00ff00 ;
+      font-weight: bold;
+      font-style: italic;
+    }
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+      font-weight: bold;
+      color:  #FF681F;
+      position: relative;
+    }
+    .info-left { position: absolute; left: 0; }
+    .info-center { margin: 0 auto; }
+    .info-right { position: absolute; right: 0; }
+    .timer {
+      font-size: 24px;
+      font-weight: bold;
+      color: darkpink;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      transition: all 0.5s ease;
+    }
+
+    .timer.red {
+  color: red;
+  opacity: 0.8 ; /* Slight transparency */
+  left: 45%; /* Move slightly to the left */
+}
+
+    .instructions, .question-box, #resultBox {
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .question-box { background: #333; }
+    .question-box p { color: yellow; }
+    .options label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+      color: pink;
+    }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    .explanation {
+      background: #00ffff;
+      color: black;
+      padding: 10px;
+      border-left: 4px solid #1890ff;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    button {
+      background: #6c5ce7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #nameEntry {
+      text-align: center;
+      margin-top: 50px;
+    }
+    #nameInput {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    #resultBox {
+      background: #3d3d3d;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+      border: 3px solid #9b59b6;
+      box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+    }
+    #resultBox h3 { color: #9b59b6; }
+    #resultBox p { color: #fff; margin: 5px 0; }
+    #resultBox strong { color: #e17055; }
+
+    /* ✅ Responsive CSS for Mobile */
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .info-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        position: static;
+      }
+      .info-left, .info-center, .info-right {
+        position: static;
+        margin: 0;
+      }
+      .timer {
+        font-size: 18px;
+        bottom: 10px;
+      }
+      #nameInput {
+        width: 100%;
+        font-size: 14px;
+      }
+      button {
+        width: 100%;
+        font-size: 14px;
+        padding: 10px;
+      }
+      .instructions, .question-box, #resultBox {
+        font-size: 14px;
+        padding: 12px;
+      }
+      .options label {
+        font-size: 14px;
+      }
+      .explanation {
+        font-size: 13px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="nameEntry">
+    <h1><span>ARMAN'S CHEMISTRY CARE</span> <span style="color:magenta">-Organic [BUET25] Exam</span></h1>
+
+    <input type="text" id="nameInput" placeholder="Enter your name to start..." />
+    <br />
+    <button onclick="startExam()">Start Exam</button>
+  </div>
+
+  <div class="container" id="examContainer" style="display:none;">
+    <h1><span>ARMAN'S CHEMISTRY CARE</span> <span style="color:magenta">-Organic [BUET25] Exam</span></h1>
+
+    <div class="info-header">
+      <div class="info-left"><strong>Full Marks:</strong> 30 </div>
+      <div class="info-center"><strong>Total Questions:</strong> 15 </div>
+      <div class="info-right"><strong>Time:15 Minutes</strong> <span class="timer" id="timer">15:00</span></div>
+    </div>
+
+    <div class="instructions">
+      <strong>Instructions:</strong>
+      <ol>
+        <li>Choose the correct option for each question.</li>
+        <li>Each correct answer carries 2 mark.</li>
+        <li>0.25 mark will be deducted for each incorrect answer.</li>
+        <li>Timer is 15 minutes. Submit before time ends.</li>
+      </ol>
+    </div>
+
+    <div id="exam"></div>
+    <button onclick="submitExam()">Submit & View Result</button>
+    <div id="resultBox"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+  <script>
+    let userName = ""; 
+    let startTime; 
+    let timerInterval;
+    let timerDuration = 15 * 60;
+
+    const nameEntry = document.getElementById("nameEntry");
+    const examContainer = document.getElementById("examContainer");
+    const timerElement = document.getElementById("timer");
+
+    const questions = [
+  {
+    q: "❖ প্রশ্ন ১: <br>নিচের কোন যৌগটি ৮টি সমগতা (isomerism) দেখায়, যেখানে ৩টি chain isomer, ৩টি functional isomer এবং ২টি position isomer?",
+    options: ["ক) C₄H₁₀O", "খ) C₄H₈O", "গ) C₅H₁₂O", "ঘ) C₄H₈"],
+    correct: 1,
+    explanation: "🧠 ব্যাখ্যা: <br>C₄H₈O একটি saturated অ্যালকোহল নয় বরং ketone/ether/alcohol ও unsaturation সব কিছু মিলে ৮টি আলাদা আলাদা যৌগ হয়।"
+  },
+  {
+    q: "❖ প্রশ্ন ২: <br>C₆H₄(NO₂)₂ এর মধ্যে electrophilic substitution সবসময় meta-position-এ হয়। নিচের কোন কারণে এটি হয়?",
+    options: ["ক) NO₂ গ্রুপ inductive donor", "খ) NO₂ গ্রুপ resonance donor", "গ) NO₂ গ্রুপ একটি deactivating meta-director", "ঘ) NO₂ গ্রুপ hyperconjugation করে"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>NO₂ হলো strongest electron-withdrawing group। এটি both -I এবং -R effect দিয়ে electrophilic substitution কে meta-position-এ ডাইরেক্ট করে।"
+  },
+  {
+    q: "❖ প্রশ্ন ৩: <br>নিচের কোন যৌগটি aromatic নয়, কিন্তু electrophilic substitution দেখায়?",
+    options: ["ক) Cycloheptatriene", "খ) Tropylium ion", "গ) Furan", "ঘ) Benzene"],
+    correct: 0,
+    explanation: "🧠 ব্যাখ্যা: <br>Cycloheptatriene যদিও aromatic নয় (non-planar), কিন্তু তার conjugated π-system electrophilic substitution দেখাতে পারে পজিটিভ চার্জ ফর্ম না করেই।"
+  },
+  {
+    q: "❖ প্রশ্ন ৪: <br>নিচের কোন যৌগটি nucleophilic aromatic substitution দেখাতে সক্ষম?",
+    options: ["ক) Nitrobenzene", "খ) Chlorobenzene", "গ) 2,4-dinitrochlorobenzene", "ঘ) Benzene sulfonic acid"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>NO₂ গ্রুপ ortho ও para তে থাকলে Cl অপসারণ সহজ হয়। এটি nucleophilic attack কে facilitate করে।"
+  },
+  {
+    q: "❖ প্রশ্ন ৫: <br>SN1 রিঅ্যাকশনে নিচের কোন carbocation সবচেয়ে বেশি stable?",
+    options: ["ক) Allyl carbocation", "খ) Benzyl carbocation", "গ) Tertiary carbocation", "ঘ) Cyclopropylmethyl carbocation"],
+    correct: 3,
+    explanation: "🧠 ব্যাখ্যা: <br>Non-classical hyperconjugated structure থাকায় এটি benzyl/allyl থেকেও বেশি stable।"
+  },
+  {
+    q: "❖ প্রশ্ন ৬: <br>নিচের কোন বিক্রিয়ায় carbocation rearrangement হবে না, যদিও তাতে carbocation intermediate তৈরি হয়?",
+    options: ["ক) 3° বুটাইল ব্রোমাইড → H₂O", "খ) 2° ক্লোরো সাইক্লোপেন্টেন → H₂O", "গ) 1° বুটাইল ব্রোমাইড → H₂O", "ঘ) 3° মিথাইল সাইক্লোহেক্সেন → H₂O"],
+    correct: 3,
+    explanation: "🧠 ব্যাখ্যা: <br>Cyclohexyl carbocation গুলা খুব stable হয় ring strain কম থাকায়। তাই rearrangement হয় না।"
+  },
+  {
+    q: "❖ প্রশ্ন ৭: <br>নিচের কোন বিক্রিয়ায় reaction intermediate একটি benzyne structure?",
+    options: ["ক) Nitration of benzene", "খ) Halogenation of benzene", "গ) Amination of chlorobenzene by NaNH₂", "ঘ) Friedel-Crafts alkylation"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>Strong base NaNH₂ যখন chlorobenzene-এ কাজ করে তখন benzyne intermediate গঠিত হয় — এটি একেবারে advanced organic mechanism!"
+  },
+  {
+    q: "❖ প্রশ্ন ৮: <br>নিচের কোন বিক্রিয়ায় প্রথমে hydride shift এবং পরে methyl shift ঘটে?",
+    options: ["ক) Rearrangement of 3° alcohol", "খ) Pinacol rearrangement", "গ) SN1 of 2° alkyl halide", "ঘ) Oxidation of methyl ketone"],
+    correct: 1,
+    explanation: "🧠 ব্যাখ্যা: <br>Pinacol → Pinacolone রিঅ্যাকশনে একাধারে hydride ও methyl shift ঘটে to stabilize carbocation। এটি multi-shift rearrangement এর classic example।"
+  },
+  {
+    q: "❖ প্রশ্ন ৯: <br>Friedel-Crafts alkylation-এ \"polyalkylation\" প্রবণতা কমাতে নিচের কোন ব্যবস্থা গ্রহণ করা হয়?",
+    options: ["ক) Excess AlCl₃", "খ) Dilute HNO₃", "গ) Use of acylation followed by reduction", "ঘ) Use of aqueous medium"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>Acylation-এ polyalkylation হয় না কারণ acyl group deactivating। পরে reduction করলে desired alkyl compound পাওয়া যায়।"
+  },
+  {
+    q: "❖ প্রশ্ন ১০: <br>একটি অজানা অ্যালকোহল এর molecular formula C₄H₁₀O। এটি Lucas reagent-এর সঙ্গে তাৎক্ষণিক cloudiness তৈরি করে। যৌগটি কী?",
+    options: ["ক) Butan-1-ol", "খ) Butan-2-ol", "গ) tert-Butyl alcohol", "ঘ) Ethanol"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>Lucas test-এ 3° alcohol দ্রুত SN1 রিঅ্যাকশনে করে। তাতে turbidity হয় momentarily।"
+  },
+  {
+    q: "❖ প্রশ্ন ১১: <br>নিচের কোন বিক্রিয়ায় carbanion intermediate তৈরি হয়?",
+    options: ["ক) Wurtz reaction", "খ) Kolbe-Schmitt reaction", "গ) SN1", "ঘ) Friedel-Crafts acylation"],
+    correct: 1,
+    explanation: "🧠 ব্যাখ্যা: <br>Kolbe-Schmitt-এ phenoxide ion → attacks CO₂ as a nucleophile, forming carbanion intermediate।"
+  },
+  {
+    q: "❖ প্রশ্ন ১২: <br>Electrophilic substitution-এর ক্ষেত্রে নিচের কোন গ্রুপ সবচেয়ে বেশি activating?",
+    options: ["ক) NO₂", "খ) -OH", "গ) -NH₂", "ঘ) -CH₃"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>-NH₂ group strong +M effect দেয়, lone pair delocalize করে π-system-এ, তাই এটি সবচেয়ে strong activating।"
+  },
+  {
+    q: "❖ প্রশ্ন ১৩: <br>নিচের কোন যৌগটি resonance effect দ্বারা পুরোপুরি non-reactive হয়ে পড়ে electrophilic substitution-এর জন্য?",
+    options: ["ক) Nitrobenzene", "খ) Phenol", "গ) Aniline (in acid)", "ঘ) Benzaldehyde"],
+    correct: 2,
+    explanation: "🧠 ব্যাখ্যা: <br>Acidic medium-এ aniline → anilinium ion হয়, যেখানে lone pair নেই। তাই resonance effect বাধাগ্রস্ত হয়, EAS বন্ধ।"
+  },
+  {
+    q: "❖ প্রশ্ন ১৪: <br>SN2 বিক্রিয়ায় নিচের কোনটির জন্য reaction fastest হয়?",
+    options: ["ক) CH₃Br", "খ) (CH₃)₂CHBr", "গ) (CH₃)₃CBr", "ঘ) C₆H₅CH₂Br"],
+    correct: 0,
+    explanation: "🧠 ব্যাখ্যা: <br>SN2-তে hindrance কম হলে reaction দ্রুত হয়। CH₃Br হচ্ছে primary methyl — কোনো steric hindrance নেই।"
+  },
+  {
+    q: "❖ প্রশ্ন ১৫: <br>Toluene → Chloromethyl benzene → Benzoic acid রূপান্তরে কোন ধরনের প্রতিক্রিয়ার সন্নিবেশ থাকে?",
+    options: ["ক) Free radical halogenation → hydrolysis → oxidation", "খ) Electrophilic substitution → Wurtz → oxidation", "গ) Nucleophilic substitution → Hydrolysis → Reduction", "ঘ) Friedel-Crafts → Cannizzaro → Halogenation"],
+    correct: 0,
+    explanation: "🧠 ব্যাখ্যা: <br>টোলুইন প্রথমে ক্লোরিনেশন (বেনজিলিক হ্যালোজেনেশন) প্রক্রিয়ার মাধ্যমে ক্লোরোমিথাইল বেনজিনে রূপান্তরিত হয়, তারপর হাইড্রোলাইসিস দ্বারা অ্যালকোহল তৈরি হয়, এবং শেষে অক্সিডেশন প্রক্রিয়ায় বেনজোইক অ্যাসিডে রূপান্তরিত হয়।"
+  }
+];
+
+
+
+
+    function startExam() {
+      userName = document.getElementById("nameInput").value.trim();
+      if (!userName) return alert("Please enter your name.");
+      startTime = new Date();
+      nameEntry.style.display = "none";
+      examContainer.style.display = "block";
+      renderQuestions();
+      startTimer();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        let minutes = Math.floor(timerDuration / 60);
+        let seconds = timerDuration % 60;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        
+        if (timerDuration <= 10) {
+          timerElement.classList.add("red");
+          navigator.vibrate([500, 500, 500]);
+        }
+
+        if (timerDuration <= 0) {
+          clearInterval(timerInterval);
+          submitExam();
+          alert("⏰ Time is up!");
+        }
+
+        timerDuration--;
+      }, 1000);
+    }
+
+    function renderQuestions() {
+      const examDiv = document.getElementById("exam");
+      examDiv.innerHTML = "";
+      questions.forEach((question, index) => {
+        const qBox = document.createElement("div");
+        qBox.className = "question-box";
+        qBox.innerHTML = `
+          <p><strong>Q${index + 1}:</strong> ${question.q}</p>
+          <div class="options">
+            ${question.options.map((opt, i) =>
+              `<label><input type="radio" name="q${index}" value="${i}"> ${opt}</label>`).join('')}
+          </div>
+          <div id="feedback${index}"></div>
+        `;
+        examDiv.appendChild(qBox);
+      });
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+
+    function submitExam() {
+      clearInterval(timerInterval);
+      const submitBtn = document.querySelector("button[onclick='submitExam()']");
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitted";
+
+      let score = 0, correctCount = 0, wrongCount = 0;
+
+      questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name='q${i}']:checked`);
+        const feedback = document.getElementById(`feedback${i}`);
+        if (!selected) {
+          feedback.innerHTML = `<p class='incorrect'>❌ উত্তর দেওয়া হয়নি।</p><div class='explanation'>সঠিক উত্তর: ${q.options[q.correct]}<br>${q.explanation}</div>`;
+          return;
+        }
+        const ans = parseInt(selected.value);
+        if (ans === q.correct) {
+          score += 2;
+          correctCount++;
+          feedback.innerHTML = `<p class='correct'>✅ সঠিক উত্তর!</p><div class='explanation'>${q.explanation}</div>`;
+        } else {
+          score -= 0.25;
+          wrongCount++;
+          feedback.innerHTML = `<p class='incorrect'>❌ ভুল উত্তর।</p><div class='explanation'>সঠিক উত্তর: ${q.options[q.correct]}<br>${q.explanation}</div>`;
+        }
+      });
+
+      const timeTaken = Math.floor((new Date() - startTime) / 1000);
+      const resultBox = document.getElementById("resultBox");
+      resultBox.innerHTML = `
+        <h3>📊 পরীক্ষার ফলাফল</h3>
+        <p><strong>👤 নাম:</strong> ${userName}</p>
+        <p><strong>✅ সঠিক উত্তর:</strong> ${correctCount}</p>
+        <p><strong>❌ ভুল উত্তর:</strong> ${wrongCount}</p>
+        <p><strong>🔢 স্কোর:</strong> ${score.toFixed(2)} out of ${questions.length * 2}</p>
+        <p><strong>⏱ সময়:</strong> ${Math.floor(timeTaken / 60)} মিনিট ${timeTaken % 60} সেকেন্ড</p>
+      `;
+
+const resultData = {
+  name: userName,
+  score: score.toFixed(2),
+  correct: correctCount,
+  wrong: wrongCount,
+  totalQuestions: questions.length,
+  timeTaken: `${Math.floor(timeTaken / 60)}m ${timeTaken % 60}s`,
+  timestamp: new Date().toISOString()
+};
+
+saveResultToFirebase(resultData);
+
+      
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    }
+  </script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAM2nrxv1LzoabNpJa2XZEqIc0kj_chspk",
+    authDomain: "armansexamresults.firebaseapp.com",
+    databaseURL: "https://armansexamresults-default-rtdb.firebaseio.com",
+    projectId: "armansexamresults",
+    storageBucket: "armansexamresults.firebasestorage.app",
+    messagingSenderId: "540618618349",
+    appId: "1:540618618349:web:c40a6f4a9afedf620463e4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.saveResultToFirebase = function(data) {
+    const examRef = ref(db, 'armans_exam_results/');
+    push(examRef, data)
+      .then(() => console.log("✅ Result saved successfully!"))
+      .catch((err) => console.error("❌ Error saving result:", err));
+  };
+</script>
+
+
+
+</body>
+</html>
